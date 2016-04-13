@@ -1,0 +1,3 @@
+<Alloy>
+	<View id="container" height="Ti.UI.SIZE"/>
+</Alloy>
