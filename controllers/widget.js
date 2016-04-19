@@ -49,7 +49,12 @@ function loadPaging(scrollableView) {
 
 function scrollerScroll(e) {
   	var currentPage = e.currentPage;
-	if (currentPage == lastPaging) { return; }
+	if (currentPage == lastPaging ||
+		
+		// fix ScrollView inside ScrollableView
+		currentPage == undefined || 
+		e.source !== params.scrollableView
+	) { return; }
 	
 	var inner = $.container.children[0],
 		classes = params.classes,
