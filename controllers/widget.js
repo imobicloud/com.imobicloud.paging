@@ -24,6 +24,7 @@ exports.load = function(_G, _params) {
 };
 
 exports.unload = function() {
+	if (params == null || params.scrollableView == null) { return; }
 	params.scrollableView.removeEventListener('scroll', scrollerScroll);
 	$.container.removeAllChildren();
 	params = null;
