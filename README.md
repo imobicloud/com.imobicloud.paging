@@ -16,7 +16,7 @@ xml
 app.tss
 
 	".paging-container": { height: 76, top: 0, touchEnabled: false }
-		".messages-paging-inner": { width: Ti.UI.SIZE, height: 5, layout: 'horizontal', touchEnabled: false }
+		".messages-paging-inner": { width: Ti.UI.SIZE, height: 5, touchEnabled: false }
 			".messages-paging-dot": { width: 5, height: 5, left: 4.5, borderRadius: 2.5, touchEnabled: false }
 			".messages-paging-dot-on": { backgroundColor: '#8c919c', opacity: 0.58 }
 			".messages-paging-dot-off": { backgroundColor: '#fff', opacity: 0.91 }      

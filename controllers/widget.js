@@ -45,13 +45,19 @@ function loadPaging(count) {
 	var classes = params.classes;
 		
 	var inner = G.UI.create('View', { classes: classes + '-paging-inner' });
-	for (var i=0; i < count; i++) {
-		var dot = G.UI.create('View', { 
-			classes: classes + '-paging-dot ' + classes + (i ? '-paging-dot-off' : '-paging-dot-on') 
-		});
-		i == 0 && (dot.left = 0);
+	var dotStyles = G.createStyle({ classes: classes + '-paging-dot' });
+	
+	for (var i = 0; i < count; i++) {
+		var dot = G.UI.create('View', dotStyles);
+		if (i != 0) {
+			G.addClass(dot, classes + '-paging-dot-off');
+		} else {
+			G.addClass(dot, classes + '-paging-dot-on');
+		}
+		dot.left = i * (dotStyles.width + dotStyles.left);
 	  	inner.add(dot);
 	}
+	
   	$.container.add(inner);
 }
 
