@@ -11,12 +11,15 @@ function init(args) {
  params = { 
  	classes: 'photos', 
  	count: 0, // number of page
+	currentPage: 0,
  	scrollableView: Titanium.UI.ScrollableView
  }
  * */
 exports.load = function(_G, _params) {
 	params = _params;
 	G = _G;
+	
+	lastPaging = params.currentPage || 0;
 	
 	if (params.count) {
 		loadPaging(params.count);
@@ -25,8 +28,6 @@ exports.load = function(_G, _params) {
 		loadPaging(scrollableView.views ? scrollableView.views.length : 0);
 		scrollableView.addEventListener('scroll', scrollerScroll);
 	}
-	
-	lastPaging = 0;
 };
 
 exports.update = updatePage;
@@ -49,7 +50,7 @@ function loadPaging(count) {
 	
 	for (var i = 0; i < count; i++) {
 		var dot = G.UI.create('View', dotStyles);
-		if (i != 0) {
+		if (i != lastPaging) {
 			G.addClass(dot, classes + '-paging-dot-off');
 		} else {
 			G.addClass(dot, classes + '-paging-dot-on');
@@ -76,13 +77,15 @@ function scrollerScroll(e) {
 }
 
 function updatePage(currentPage) {
+	if (currentPage == lastPaging) { return; }
+	
 	var classes = params.classes;
 	
 	var inner = $.container.children[0],
 		dots = inner.children;
 	if (dots.length) {
-	  	dots[lastPaging ].applyProperties( G.createStyle({ classes: classes + '-paging-dot-off' }) );
-		dots[currentPage].applyProperties( G.createStyle({ classes: classes + '-paging-dot-on'  }) );
+	  	dots[lastPaging ] && dots[lastPaging ].applyProperties( G.createStyle({ classes: classes + '-paging-dot-off' }) );
+		dots[currentPage] && dots[currentPage].applyProperties( G.createStyle({ classes: classes + '-paging-dot-on'  }) );
 	}
 	
 	lastPaging = currentPage;

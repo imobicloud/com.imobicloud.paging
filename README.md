@@ -25,7 +25,14 @@ js
 
 	$.paging.load($, { 
 		classes: 'messages', 
+		currentPage: 0,
 		scrollableView: scroller 
 	});
 
 	$.paging.unload();
+
+Change log:
+
+- 5/26/2017: 
+ 	+ add currentPage parameter
+	+ fix undefined view
