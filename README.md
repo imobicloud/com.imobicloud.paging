@@ -10,7 +10,7 @@ xml
 			<Label>View 1</Label>
 		</View>
 	</ScrollableView>
-	
+
 	<Widget id="paging" src="com.imobicloud.paging" class="paging-container"/>
 
 app.tss
@@ -21,18 +21,36 @@ app.tss
 			".messages-paging-dot-on": { backgroundColor: '#8c919c', opacity: 0.58 }
 			".messages-paging-dot-off": { backgroundColor: '#fff', opacity: 0.91 }      
 
-js 
+js
 
-	$.paging.load($, { 
-		classes: 'messages', 
+	$.paging.load($, {
+		classes: 'messages',
 		currentPage: 0,
-		scrollableView: scroller 
+		scrollableView: scroller
 	});
+
+	/*
+	$.paging.load($, {
+		classes: 'messages',
+		currentPage: 0,
+		scrollableView: scroller,
+
+		// view source for pageFormatter + pageUpdater examples
+		pageFormatter: function(container, params) {},
+		pageUpdater: function(container, params) {}
+	});
+	*/
 
 	$.paging.unload();
 
 Change log:
 
-- 5/26/2017: 
+- 5/31/2017
+	+ deprecated count parameter in favor of [pageFormatter] and [pageUpdater] parameter
+	+ deprecated update function in favor of [pageFormatter] and [pageUpdater] parameter
+	+ add pageFormatter parameter
+	+ add pageUpdater parameter
+
+- 5/26/2017:
  	+ add currentPage parameter
 	+ fix undefined view

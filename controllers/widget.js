@@ -1,5 +1,4 @@
 var G, params;
-var lastPaging;
 
 init($.args);
 function init(args) {
@@ -8,29 +7,42 @@ function init(args) {
 }
 
 /*
- params = { 
- 	classes: 'photos', 
- 	count: 0, // number of page
+ params = {
+ 	classes: 'photos',
+ 	count: 0, // number of page // Deprecated
 	currentPage: 0,
- 	scrollableView: Titanium.UI.ScrollableView
+ 	scrollableView: Titanium.UI.ScrollableView,
+	pageFormatter: null // function(container, params) {},
+	pageUpdater: null // function(container, params) {}
  }
  * */
 exports.load = function(_G, _params) {
 	params = _params;
 	G = _G;
-	
-	lastPaging = params.currentPage || 0;
-	
+
+	if (params.currentPage == null) { params.currentPage = 0; }
+	params.lastPage = params.currentPage;
+
+	var formatter = params.pageFormatter || pageFormatter;
 	if (params.count) {
-		loadPaging(params.count);
+		// TODO: Deprecated
+		Ti.API.error('com.imobicloud.paging: [count] parameter DEPRECATED in favor of [pageFormatter] and [pageUpdater] parameter');
+
+		formatter($.container, params);
 	} else if (params.scrollableView) {
 		var scrollableView = params.scrollableView;
-		loadPaging(scrollableView.views ? scrollableView.views.length : 0);
+		params.count = scrollableView.views ? scrollableView.views.length : 0;
+		formatter($.container, params);
 		scrollableView.addEventListener('scroll', scrollerScroll);
 	}
 };
 
-exports.update = updatePage;
+exports.update = function(currentPage) {
+	// TODO: Deprecated
+	Ti.API.error('com.imobicloud.paging: [update] DEPRECATED in favor of [pageFormatter] and [pageUpdater] parameter');
+	params.currentPage = currentPage;
+	pageUpdater($.container, params);
+};
 
 exports.unload = function() {
 	if (params == null) { return; }
@@ -42,15 +54,31 @@ exports.unload = function() {
 	G = null;
 };
 
-function loadPaging(count) {
-	var classes = params.classes;
-		
+function scrollerScroll(e) {
+	if (e.currentPage == params.lastPage ||
+
+		// fix ScrollView inside ScrollableView
+		e.currentPage == undefined ||
+		e.source !== params.scrollableView
+	) { return; }
+
+	params.currentPage = e.currentPage;
+
+	var updater = params.pageUpdater || pageUpdater;
+	updater($.container, params);
+
+	$.trigger('scroll', e);
+}
+
+function pageFormatter(container, _params) {
+	var classes = _params.classes;
+
 	var inner = G.UI.create('View', { classes: classes + '-paging-inner' });
 	var dotStyles = G.createStyle({ classes: classes + '-paging-dot' });
-	
-	for (var i = 0; i < count; i++) {
+
+	for (var i = 0, ii = _params.count; i < ii; i++) {
 		var dot = G.UI.create('View', dotStyles);
-		if (i != lastPaging) {
+		if (i != _params.currentPage) {
 			G.addClass(dot, classes + '-paging-dot-off');
 		} else {
 			G.addClass(dot, classes + '-paging-dot-on');
@@ -58,35 +86,21 @@ function loadPaging(count) {
 		dot.left = i * (dotStyles.width + dotStyles.left);
 	  	inner.add(dot);
 	}
-	
-  	$.container.add(inner);
+
+  	container.add(inner);
 }
 
-function scrollerScroll(e) {
-  	var currentPage = e.currentPage;
-	if (currentPage == lastPaging ||
-		
-		// fix ScrollView inside ScrollableView
-		currentPage == undefined || 
-		e.source !== params.scrollableView
-	) { return; }
-	
-	updatePage(currentPage);
-	
-	$.trigger('scroll', e);
-}
+function pageUpdater(container, _params) {
+	if (_params.currentPage == _params.lastPage) { return; }
 
-function updatePage(currentPage) {
-	if (currentPage == lastPaging) { return; }
-	
-	var classes = params.classes;
-	
-	var inner = $.container.children[0],
+	var classes = _params.classes;
+
+	var inner = container.children[0],
 		dots = inner.children;
 	if (dots.length) {
-	  	dots[lastPaging ] && dots[lastPaging ].applyProperties( G.createStyle({ classes: classes + '-paging-dot-off' }) );
-		dots[currentPage] && dots[currentPage].applyProperties( G.createStyle({ classes: classes + '-paging-dot-on'  }) );
+	  	dots[_params.lastPage   ] && dots[_params.lastPage   ].applyProperties( G.createStyle({ classes: classes + '-paging-dot-off' }) );
+		dots[_params.currentPage] && dots[_params.currentPage].applyProperties( G.createStyle({ classes: classes + '-paging-dot-on'  }) );
 	}
-	
-	lastPaging = currentPage;
+
+	_params.lastPage = _params.currentPage;
 }
