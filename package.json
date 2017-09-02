@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0",
+  "appc-npm": {
+    "config": {
+      "com.imobicloud.paging": "1.0.0"
+    },
+    "target": {
+      "alloy": "app/widgets/com.imobicloud.paging"
+    },
+    "ignore": [
+      "package.json"
+    ]
+  },
+  "description": "",
+  "author": "",
+  "license": "Public Domain",
+  "name": "com.imobicloud.paging",
+  "scripts": {
+    "postinstall": "node ./appc-npm"
+  },
+  "keywords": [
+    "alloy",
+    "alloy-widget",
+    "appc-npm",
+    "appcelerator"
+  ]
+}
